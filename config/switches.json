@@ -1,0 +1,51 @@
+{
+  "RINGS1": {
+    "name": "RING-S1",
+    "address": "10.30.0.200",
+    "model": "ISCOM",
+    "username": "venko",
+    "password": "V3nk0-raisecom"
+  },
+  "RINGS2": {
+    "name": "RING-S2",
+    "address": "10.30.0.201",
+    "model": "RAX711",
+    "username": "master",
+    "password": "America.1"
+  },
+  "RINGS3": {
+    "name": "RING-S3",
+    "address": "10.30.0.202",
+    "model": "ISCOM",
+    "username": "venko",
+    "password": "V3nk0-raisecom"
+  },
+  "ISCOM-S4": {
+    "name": "ISCOM-S4",
+    "address": "10.30.0.248",
+    "model": "ISCOM",
+    "username": "venko",
+    "password": "V3nk0-raisecom"
+  },
+  "RAX-MPLS1": {
+    "name": "RAX-MPLS1",
+    "address": "10.30.0.203",
+    "model": "RAX711",
+    "username": "venko",
+    "password": "V3nk0-raisecom"
+  },
+  "RAX-MPLS2": {
+    "name": "RAX-MPLS2",
+    "address": "10.30.0.204",
+    "model": "RAX711",
+    "username": "raisecom",
+    "password": "raisecom"
+  },
+  "RAX-MPLS3": {
+    "name": "RAX-MPLS3",
+    "address": "10.30.0.206",
+    "model": "RAX711",
+    "username": "raisecom",
+    "password": "raisecom"
+  }
+}

@@ -1,0 +1,29 @@
+{
+  "needs_file_swap": false,
+  "ready_prompt": "#",
+  "login": [
+    {"expect": "gin:", "send": "{username}"},
+    {"expect": "ord:", "send": "{password}"}
+  ],
+  "operations": {
+    "sanitize": [
+      {"expect": "#", "send": "boot next-startup system1"},
+      {"expect": "#", "send": "write"},
+      {"expect": "#", "send": "reboot"},
+      {"expect": "firm:", "send": "yes"}
+    ],
+    "reboot": [
+      {"expect": "#", "send": "reboot"},
+      {"expect": "firm:", "send": "yes"}
+    ],
+    "upload": [
+      {"expect": "#", "send": "write backup-config"},
+      {"expect": "#", "send": "upload backup-config ftp {ftp_host} {ftp_user} {ftp_pass} {filename}"}
+    ],
+    "download": [
+      {"expect": "#", "send": "download backup-config ftp {ftp_host} {ftp_user} {ftp_pass} {filename}"},
+      {"expect": "place it", "send": "yes"},
+      {"expect": "#", "send": "copy backup-config startup-config"}
+    ]
+  }
+}

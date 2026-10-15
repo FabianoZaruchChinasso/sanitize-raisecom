@@ -1,0 +1,19 @@
+{
+  "needs_file_swap": false,
+  "ready_prompt": "NOS#",
+  "login": [
+    {"expect": "gin:", "send": "{username}"},
+    {"expect": "ord:", "send": "{password}"},
+    {"expect": "OS>", "send": "ena"}
+  ],
+  "operations": {
+    "sanitize": [
+      {"expect": "(y/n):", "send": "reload"},
+      {"expect": null, "send": "y"}
+    ],
+    "reboot": [
+      {"expect": "(y/n):", "send": "reload"},
+      {"expect": null, "send": "y"}
+    ]
+  }
+}

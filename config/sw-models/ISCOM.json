@@ -1,0 +1,24 @@
+{
+  "needs_file_swap": true,
+  "ready_prompt": "#",
+  "login": [
+    {"expect": "ame: ", "send": "{username}"},
+    {"expect": "ord: ", "send": "{password}"}
+  ],
+  "operations": {
+    "sanitize": [
+      {"expect": "y/n):", "send": "reboot"},
+      {"expect": null, "send": "y"}
+    ],
+    "reboot": [
+      {"expect": "y/n):", "send": "reboot"},
+      {"expect": null, "send": "y"}
+    ],
+    "upload": [
+      {"expect": "#", "send": "ftp put {ftp_host} {ftp_user} {ftp_pass} {filename} running-config"}
+    ],
+    "download": [
+      {"expect": "#", "send": "ftp get {ftp_host} {ftp_user} {ftp_pass} {filename} localfile backup.cfg"}
+    ]
+  }
+}

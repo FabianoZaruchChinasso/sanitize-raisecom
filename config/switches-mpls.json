@@ -1,0 +1,30 @@
+{
+  "RINGS2": {
+    "name": "RING-S2",
+    "address": "10.30.0.201",
+    "model": "RAX711",
+    "username": "master",
+    "password": "America.1"
+  },
+  "RAX-MPLS1": {
+    "name": "RAX-MPLS1",
+    "address": "10.30.0.203",
+    "model": "RAX711",
+    "username": "venko",
+    "password": "V3nk0-raisecom"
+  },
+  "RAX-MPLS2": {
+    "name": "RAX-MPLS2",
+    "address": "10.30.0.204",
+    "model": "RAX711",
+    "username": "raisecom",
+    "password": "raisecom"
+  },
+  "RAX-MPLS3": {
+    "name": "RAX-MPLS3",
+    "address": "10.30.0.206",
+    "model": "RAX711",
+    "username": "raisecom",
+    "password": "raisecom"
+  }
+}
