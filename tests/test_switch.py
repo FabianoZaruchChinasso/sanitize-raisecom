@@ -112,6 +112,28 @@ class SwitchTests(unittest.TestCase):
             ],
         )
 
+    def test_download_waits_for_confirmation_then_copies_startup_config(self):
+        fake = FakeTelnet(reads=[b"gin:", b"#", b"place it", b"#", b"#"])
+        configuration = make_configuration()
+        configuration.models["RAX711"]["operations"]["download"] = [
+            {"expect": "place it", "send": "download backup-config"},
+            {"expect": "#", "send": "yes"},
+            {"expect": "#", "send": "copy backup-config startup-config"},
+        ]
+        switch = self.make_switch(fake, configuration)
+
+        switch.execute("download", {"config_name": "backup"})
+
+        self.assertEqual(
+            fake.writes,
+            [
+                b"user\n",
+                b"download backup-config\n",
+                b"yes\n",
+                b"copy backup-config startup-config\n",
+            ],
+        )
+
     def test_sanitize_swaps_files_but_reboot_does_not(self):
         fake = FakeTelnet(reads=[b"gin:", b"#", b"#"])
         swap_calls = []

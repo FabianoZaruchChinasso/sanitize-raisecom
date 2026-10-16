@@ -65,9 +65,9 @@ The alias `all` is reserved and cannot be used as a switch alias.
 
 ```json
 {
-  "host": "10.147.20.159",
-  "user": "venko",
-  "password": "V3nk0"
+  "host": "10.30.0.220",
+  "user": "raisecom",
+  "password": "r@is3c0m"
 }
 ```
 

@@ -108,6 +108,35 @@ class ConfigurationTests(unittest.TestCase):
             ["boot next-startup system1", "write", "reboot", "yes"],
         )
 
+    def test_production_rax_download_starts_with_confirmation_prompt(self):
+        configuration = sanitize_3.load_configuration(
+            Path(__file__).parents[1] / "config", "switches-mpls.json"
+        )
+
+        steps = configuration.models["RAX711"]["operations"]["download"]
+
+        self.assertEqual(
+            [step["expect"] for step in steps],
+            ["place it", "#", "#"],
+        )
+
+    def test_production_rax_reboot_waits_for_confirmation_prompt(self):
+        configuration = sanitize_3.load_configuration(
+            Path(__file__).parents[1] / "config", "switches-mpls.json"
+        )
+
+        reboot_steps = configuration.models["RAX711"]["operations"]["reboot"]
+        sanitize_steps = configuration.models["RAX711"]["operations"]["sanitize"][-2:]
+
+        self.assertEqual(
+            [step["expect"] for step in reboot_steps],
+            ["Please input 'yes' to confirm", None],
+        )
+        self.assertEqual(
+            [step["expect"] for step in sanitize_steps],
+            ["Please input 'yes' to confirm", None],
+        )
+
     def test_invalid_model_placeholder_is_rejected_before_execution(self):
         with tempfile.TemporaryDirectory() as directory:
             root = Path(directory)

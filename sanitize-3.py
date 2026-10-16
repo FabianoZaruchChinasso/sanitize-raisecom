@@ -296,7 +296,8 @@ class Switch:
                     response = self.t.read_until(expected.encode("ascii"), self.timeout)
                     if expected.encode("ascii") not in response:
                         raise OperationError(
-                            f"Unexpected prompt for {self.switch_alias}: expected {expected!r}"
+                            f"Unexpected prompt for {self.switch_alias}: expected {expected!r}; "
+                            f"received {response!r}"
                         )
                     if response:
                         print(response.decode("ascii", errors="replace"), end="")
@@ -316,7 +317,8 @@ class Switch:
                     response = self.t.read_until(expected.encode("ascii"), self.timeout)
                     if expected.encode("ascii") not in response:
                         raise OperationError(
-                            f"Unexpected prompt for {self.switch_alias}: expected {expected!r}"
+                            f"Unexpected prompt for {self.switch_alias}: expected {expected!r}; "
+                            f"received {response!r}"
                         )
                     if response:
                         print(response.decode("ascii", errors="replace"), end="")

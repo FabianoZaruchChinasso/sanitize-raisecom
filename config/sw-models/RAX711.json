@@ -9,20 +9,20 @@
     "sanitize": [
       {"expect": "#", "send": "boot next-startup system1"},
       {"expect": "#", "send": "write"},
-      {"expect": "#", "send": "reboot"},
-      {"expect": "firm:", "send": "yes"}
+      {"expect": "Please input 'yes' to confirm", "send": "reboot"},
+      {"expect": null, "send": "yes"}
     ],
     "reboot": [
-      {"expect": "#", "send": "reboot"},
-      {"expect": "firm:", "send": "yes"}
+      {"expect": "Please input 'yes' to confirm", "send": "reboot"},
+      {"expect": null, "send": "yes"}
     ],
     "upload": [
       {"expect": "#", "send": "write backup-config"},
       {"expect": "#", "send": "upload backup-config ftp {ftp_host} {ftp_user} {ftp_pass} {filename}"}
     ],
     "download": [
-      {"expect": "#", "send": "download backup-config ftp {ftp_host} {ftp_user} {ftp_pass} {filename}"},
-      {"expect": "place it", "send": "yes"},
+      {"expect": "place it", "send": "download backup-config ftp {ftp_host} {ftp_user} {ftp_pass} {filename}"},
+      {"expect": "#", "send": "yes"},
       {"expect": "#", "send": "copy backup-config startup-config"}
     ]
   }
