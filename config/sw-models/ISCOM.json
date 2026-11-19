@@ -1,5 +1,5 @@
 {
-  "needs_file_swap": true,
+  "needs_file_swap": false,
   "ready_prompt": "#",
   "login": [
     {"expect": "ame: ", "send": "{username}"},
@@ -7,10 +7,12 @@
   ],
   "operations": {
     "sanitize": [
+      {"expect": "#", "send": "boot startup-config backup"},
       {"expect": "y/n):", "send": "reboot"},
       {"expect": null, "send": "y"}
     ],
     "reboot": [
+      {"expect": "#", "send": "boot startup-config main"},
       {"expect": "y/n):", "send": "reboot"},
       {"expect": null, "send": "y"}
     ],
@@ -18,7 +20,12 @@
       {"expect": "#", "send": "ftp put {ftp_host} {ftp_user} {ftp_pass} {filename} running-config"}
     ],
     "download": [
-      {"expect": "#", "send": "ftp get {ftp_host} {ftp_user} {ftp_pass} {filename} localfile backup.cfg"}
+      {"expect": "#", "send": "ftp get {ftp_host} {ftp_user} {ftp_pass} {filename} localfile backup.cfg"},
+      {"expect": "#", "send": "copy downloads/backup.cfg start.cfg"},
+      {"expect": "#", "send": "configure"},
+      {"expect": "y/n):", "send": "upgrade config localfile start.cfg"},
+      {"expect": "config)#", "send": "y", "timeout": 300},
+      {"expect": "#", "send": "exit"}
     ]
   }
 }

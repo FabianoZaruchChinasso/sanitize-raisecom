@@ -82,6 +82,10 @@ def _validate_step_template(step, location):
         raise ConfigurationError(f"Invalid command step at {location}: 'send' must be a string")
     if "expect" in step and step["expect"] is not None and not isinstance(step["expect"], str):
         raise ConfigurationError(f"Invalid command step at {location}: 'expect' must be a string")
+    if "timeout" in step:
+        timeout = step["timeout"]
+        if isinstance(timeout, bool) or not isinstance(timeout, (int, float)) or timeout <= 0:
+            raise ConfigurationError(f"Invalid command step at {location}: 'timeout' must be positive")
     fields = {
         field_name
         for value in step.values()
@@ -293,7 +297,8 @@ class Switch:
             for rendered in login_steps:
                 expected = rendered.get("expect")
                 if expected:
-                    response = self.t.read_until(expected.encode("ascii"), self.timeout)
+                    timeout = rendered.get("timeout", self.timeout)
+                    response = self.t.read_until(expected.encode("ascii"), timeout)
                     if expected.encode("ascii") not in response:
                         raise OperationError(
                             f"Unexpected prompt for {self.switch_alias}: expected {expected!r}; "
@@ -314,7 +319,8 @@ class Switch:
                 self.t.write(rendered["send"].encode("ascii") + b"\n")
                 expected = rendered.get("expect")
                 if expected:
-                    response = self.t.read_until(expected.encode("ascii"), self.timeout)
+                    timeout = rendered.get("timeout", self.timeout)
+                    response = self.t.read_until(expected.encode("ascii"), timeout)
                     if expected.encode("ascii") not in response:
                         raise OperationError(
                             f"Unexpected prompt for {self.switch_alias}: expected {expected!r}; "

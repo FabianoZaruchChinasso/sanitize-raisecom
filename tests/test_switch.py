@@ -134,6 +134,18 @@ class SwitchTests(unittest.TestCase):
             ],
         )
 
+    def test_operation_step_can_override_prompt_timeout(self):
+        fake = FakeTelnet(reads=[b"gin:", b"#", b"#"])
+        configuration = make_configuration()
+        configuration.models["RAX711"]["operations"]["reboot"] = [
+            {"expect": "#", "send": "reboot", "timeout": 30}
+        ]
+        switch = self.make_switch(fake, configuration)
+
+        switch.execute("reboot", {})
+
+        self.assertEqual(fake.read_prompts[-1][1], 30)
+
     def test_sanitize_swaps_files_but_reboot_does_not(self):
         fake = FakeTelnet(reads=[b"gin:", b"#", b"#"])
         swap_calls = []

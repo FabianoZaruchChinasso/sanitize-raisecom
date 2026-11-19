@@ -61,7 +61,8 @@ login, and an `operations` object with
 `sanitize`, `reboot`, `upload`, and `download` ordered step lists. A step has an
 expected response prompt and a command to send. Login steps wait for their
 prompt before sending; operation steps send first and then wait for the
-configured response prompt. Commands may use placeholders for
+configured response prompt. A command step may override the default prompt
+timeout with a positive timeout in seconds. Commands may use placeholders for
 switch credentials, switch name, FTP settings, and the generated configuration
 filename. Model flags such as file swapping are also stored in the model file.
 
@@ -125,7 +126,7 @@ reboot sequence.
 - The existing RAX upload/download flow can be represented by JSON without
   model-name conditionals in Python.
 - The existing sanitize/reboot flows can be represented by JSON, including
-  RAX-specific extra commands and ISCOM file swapping.
+  RAX-specific extra commands and the current ISCOM no-file-swap behavior.
 - A single configured switch and all configured switches can be selected.
 - Invalid files, models, operations, and switch names fail with actionable
   errors before a Telnet session is opened.

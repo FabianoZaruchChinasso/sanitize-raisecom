@@ -20,14 +20,17 @@ config/
     OCNOS.json
 ```
 
-For sanitize operations, also copy the helper scripts used by the deployment
-beside `sanitize-3.py`:
+For sanitize operations that use configured helper scripts, copy the helper
+scripts beside `sanitize-3.py`:
 
 ```text
 swap_files.sh
 muser_stop.sh
 muser_start.sh
 ```
+
+The current ISCOM model does not use `swap_files.sh`. The mini-user scripts
+remain required for sanitize runs because they are executed after sanitizing.
 
 The helper scripts must be executable. Create a virtual environment and
 install the Telnet compatibility dependency:
@@ -84,6 +87,9 @@ command has no response prompt to wait for. Supported command placeholders are:
 - `{config_name}` and `{filename}`
 
 `{filename}` is generated as `{config_name}-{device_name}.cfg`.
+
+Any command step may also define a positive `timeout` in seconds when the
+switch operation is expected to take longer than the default prompt timeout.
 
 These files contain plaintext switch and FTP credentials. Protect them on the
 target host, for example:
