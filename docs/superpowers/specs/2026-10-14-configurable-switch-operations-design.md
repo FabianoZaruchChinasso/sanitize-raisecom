@@ -64,7 +64,8 @@ prompt before sending; operation steps send first and then wait for the
 configured response prompt. A command step may override the default prompt
 timeout with a positive timeout in seconds. Commands may use placeholders for
 switch credentials, switch name, FTP settings, and the generated configuration
-filename. Model flags such as file swapping are also stored in the model file.
+filename. Model files contain only behavior needed by the configured Telnet
+operations.
 
 The supported placeholder schema is fixed and validated by `render_step()`:
 
@@ -90,9 +91,8 @@ means `all`. `--config-dir PATH` defaults to `./config`, and `--list FILE`
 defaults to `switches.json`. `--config-name PREFIX` produces
 `{PREFIX}-{switch_name}.cfg` and is required for upload/download operations.
 
-`--sanitize` performs the current factory-reset procedure, including model
-configured file swapping. `--reboot` performs only the configured normal
-reboot sequence.
+`--sanitize` performs the current factory-reset procedure. `--reboot` performs
+only the configured normal reboot sequence.
 
 ## Constraints
 
@@ -116,8 +116,6 @@ reboot sequence.
   reserved keyword `all` cannot be used as an alias.
 - A model may omit an operation; selecting an unavailable operation fails
   before opening a Telnet connection.
-- File-swap helper scripts are copied beside `sanitize-3.py` and their
-  location is documented in `README.md`.
 - `Switch.execute()` guarantees `close_session()` in exception cleanup before
   propagating the failure to serial orchestration.
 
@@ -126,7 +124,7 @@ reboot sequence.
 - The existing RAX upload/download flow can be represented by JSON without
   model-name conditionals in Python.
 - The existing sanitize/reboot flows can be represented by JSON, including
-  RAX-specific extra commands and the current ISCOM no-file-swap behavior.
+  RAX-specific extra commands.
 - A single configured switch and all configured switches can be selected.
 - Invalid files, models, operations, and switch names fail with actionable
   errors before a Telnet session is opened.

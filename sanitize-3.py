@@ -241,8 +241,6 @@ class Switch:
         switch_alias,
         configuration,
         telnet_factory=None,
-        swap_runner=None,
-        helper_dir=None,
         timeout=10,
     ):
         if switch_alias not in configuration.switches:
@@ -252,8 +250,6 @@ class Switch:
         self.switch = configuration.switches[switch_alias]
         self.model = configuration.models[self.switch["model"]]
         self.telnet_factory = telnet_factory or self._default_telnet_factory
-        self.swap_runner = swap_runner or self._default_swap_runner
-        self.helper_dir = Path(helper_dir) if helper_dir else Path(__file__).parent
         self.timeout = timeout
         self.t = None
 
@@ -264,12 +260,6 @@ class Switch:
         except ImportError as error:
             raise OperationError("telnetlib dependency is not installed") from error
         return telnetlib.Telnet(address, timeout=timeout)
-
-    def _default_swap_runner(self, device_name):
-        helper = self.helper_dir / "swap_files.sh"
-        if not helper.exists():
-            raise OperationError(f"File swap helper not found: {helper}")
-        subprocess.run(["bash", str(helper), device_name], check=True, cwd=self.helper_dir)
 
     def _context(self, context):
         values = {
@@ -287,9 +277,6 @@ class Switch:
     def execute(self, operation, context):
         try:
             steps = validate_operation(self.configuration, self.switch_alias, operation)
-            if operation == "sanitize" and self.model.get("needs_file_swap"):
-                self.swap_runner(self.switch["name"])
-
             values = self._context(context)
             login_steps = [render_step(step, values) for step in self.model["login"]]
             operation_steps = [render_step(step, values) for step in steps]

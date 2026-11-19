@@ -35,7 +35,7 @@ class FakeTelnet:
         self.closed = True
 
 
-def make_configuration(needs_file_swap=False):
+def make_configuration():
     return sanitize_3.Configuration(
         switches={
             "RINGS2": {
@@ -49,7 +49,6 @@ def make_configuration(needs_file_swap=False):
         ftp={"host": "ftp", "user": "ftp-user", "password": "ftp-pass"},
         models={
             "RAX711": {
-                "needs_file_swap": needs_file_swap,
                 "ready_prompt": "#",
                 "login": [{"expect": "gin:", "send": "{username}"}],
                 "operations": {
@@ -65,12 +64,11 @@ def make_configuration(needs_file_swap=False):
 
 
 class SwitchTests(unittest.TestCase):
-    def make_switch(self, fake, configuration, swap_runner=None):
+    def make_switch(self, fake, configuration):
         return sanitize_3.Switch(
             "RINGS2",
             configuration,
             telnet_factory=lambda address, timeout: fake,
-            swap_runner=swap_runner,
             timeout=3,
         )
 
@@ -145,20 +143,6 @@ class SwitchTests(unittest.TestCase):
         switch.execute("reboot", {})
 
         self.assertEqual(fake.read_prompts[-1][1], 30)
-
-    def test_sanitize_swaps_files_but_reboot_does_not(self):
-        fake = FakeTelnet(reads=[b"gin:", b"#", b"#"])
-        swap_calls = []
-        configuration = make_configuration(needs_file_swap=True)
-        switch = self.make_switch(fake, configuration, swap_calls.append)
-
-        switch.execute("reboot", {})
-        self.assertEqual(swap_calls, [])
-
-        fake = FakeTelnet(reads=[b"gin:", b"#", b"#", b"#"])
-        switch = self.make_switch(fake, configuration, swap_calls.append)
-        switch.execute("sanitize", {})
-        self.assertEqual(swap_calls, ["RING-S2"])
 
     def test_command_response_is_printed(self):
         fake = FakeTelnet(reads=[b"gin:\n", b"#", b"#\ncommand output\n#"])

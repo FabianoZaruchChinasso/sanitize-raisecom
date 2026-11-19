@@ -20,17 +20,13 @@ config/
     OCNOS.json
 ```
 
-For sanitize operations that use configured helper scripts, copy the helper
-scripts beside `sanitize-3.py`:
+For sanitize operations, copy the mini-user helper scripts beside
+`sanitize-3.py`:
 
 ```text
-swap_files.sh
 muser_stop.sh
 muser_start.sh
 ```
-
-The current ISCOM model does not use `swap_files.sh`. The mini-user scripts
-remain required for sanitize runs because they are executed after sanitizing.
 
 The helper scripts must be executable. Create a virtual environment and
 install the Telnet compatibility dependency:
@@ -137,9 +133,8 @@ directory and defaults to `switches.json`. Upload and download require
 `--config-name`; for example, `--config-name nightly` and device `RING-S2`
 produce `nightly-RING-S2.cfg`.
 
-`--sanitize` performs the model's factory-reset procedure and runs the model's
-file-swap helper when configured. `--reboot` runs only the model's reboot
-procedure.
+`--sanitize` performs the model's factory-reset procedure. `--reboot` runs
+only the model's reboot procedure.
 
 ## Failure Behavior
 

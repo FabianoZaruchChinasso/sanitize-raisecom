@@ -19,7 +19,7 @@
 - Credentials and FTP settings are JSON-configured plaintext values and must be documented as sensitive.
 - Operations are `sanitize`, `reboot`, `upload`, and `download`.
 - An omitted operation target means `all`.
-- `--sanitize` performs factory reset and configured file swapping; `--reboot` does not file-swap.
+- `--sanitize` performs factory reset; `--reboot` performs only reboot behavior.
 - All-switch execution is serial, continues after individual failures, and exits nonzero if any switch fails.
 - Prompt matching is substring matching with finite timeouts.
 - Invalid configuration and unavailable operations fail before opening Telnet.
@@ -83,7 +83,7 @@
   Move the current inventory, credentials, FTP server values, and model command
   sequences into the three JSON model files. Use one `operations` object with
   `sanitize`, `reboot`, `upload`, and `download` lists. Preserve RAX backup
-  config commands, ISCOM FTP commands and file swapping, and any currently
+  config commands, ISCOM FTP commands, and any currently
   supported OCNOS entries without adding new device behavior.
 
 - [ ] **Step 5: Run the focused tests and verify they pass**
@@ -150,7 +150,7 @@
 
   Provide a fake Telnet object that records `read_until()` and `write()` calls.
   Test login followed by ordered operation commands, substring prompt reads,
-  command response output, file swapping only for sanitize, and RAX-specific
+  command response output and RAX-specific
   commands coming from JSON rather than Python model conditionals. Test that a
   timeout, EOF, or connection error raises an operation error and closes the
   session.
@@ -166,10 +166,8 @@
   Replace hardcoded model selection in the new script with the loaded model
   definition. Connect through an injectable Telnet factory, use a finite
   timeout for every prompt wait, send login and operation steps in order, and
-  decode output safely for display. Execute the configured file-swap helper
-  before sanitize, wait for its completion, and abort sanitize if it fails.
-  Keep normal reboot free of file swapping. Implement `Switch` as a context
-  manager or use a `try/finally` in `Switch.execute()` so `close_session()` is
+  decode output safely for display. Implement `Switch` as a context manager or
+  use a `try/finally` in `Switch.execute()` so `close_session()` is
   strictly called for every exception before the exception is propagated to
   orchestration; do not rely on `__del__`.
 
@@ -184,7 +182,7 @@
 - Modify: `sanitize-3.py`
 - Create: `README.md`
 - Create: `tests/test_orchestration.py`
-- Include: `swap_files.sh`, `muser_stop.sh`, and `muser_start.sh` in the deployment instructions when present on the source host.
+- Include: `muser_stop.sh` and `muser_start.sh` in the deployment instructions when present on the source host.
 
 **Interfaces:**
 - Consumes: CLI and `Switch` interfaces from Tasks 1-3.

@@ -1,5 +1,4 @@
 {
-  "needs_file_swap": false,
   "ready_prompt": "#",
   "login": [
     {"expect": "gin:", "send": "{username}"},

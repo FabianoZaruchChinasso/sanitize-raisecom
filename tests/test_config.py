@@ -33,7 +33,6 @@ class ConfigurationTests(unittest.TestCase):
         (root / "sw-models" / "RAX711.json").write_text(
             json.dumps(
                 {
-                    "needs_file_swap": False,
                     "ready_prompt": "#",
                     "login": [{"expect": "gin:", "send": "{username}"}],
                     "operations": {
@@ -145,13 +144,6 @@ class ConfigurationTests(unittest.TestCase):
         upgrade_confirmation = configuration.models["ISCOM"]["operations"]["download"][4]
 
         self.assertEqual(upgrade_confirmation["timeout"], 300)
-
-    def test_iscom_does_not_require_file_swap_helper(self):
-        configuration = sanitize_3.load_configuration(
-            Path(__file__).parents[1] / "config", "switches.json"
-        )
-
-        self.assertFalse(configuration.models["ISCOM"]["needs_file_swap"])
 
     def test_invalid_model_placeholder_is_rejected_before_execution(self):
         with tempfile.TemporaryDirectory() as directory:
