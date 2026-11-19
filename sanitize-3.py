@@ -197,6 +197,7 @@ def parse_args(argv=None):
     operations.add_argument("-r", "--reboot", dest="reboot_target", nargs="?", const="all", metavar="SWITCH")
     operations.add_argument("-u", "--upload", dest="upload_target", nargs="?", const="all", metavar="SWITCH")
     operations.add_argument("-d", "--download", dest="download_target", nargs="?", const="all", metavar="SWITCH")
+    parser.add_argument("-m", "--miniusers", dest="miniusers_target", action="store_true")
     parser.add_argument("-c", "--config-name", dest="config_name")
     parser.add_argument("-l", "--list", dest="inventory_file", default=DEFAULT_INVENTORY_FILE)
     parser.add_argument("--config-dir", type=Path, default=DEFAULT_CONFIG_DIR)
@@ -209,6 +210,7 @@ def parse_args(argv=None):
             ("reboot", arguments.reboot_target),
             ("upload", arguments.upload_target),
             ("download", arguments.download_target),
+            ("miniusers", "all" if arguments.miniusers_target else None),
         )
         if option is not None
     ]
@@ -218,7 +220,10 @@ def parse_args(argv=None):
         arguments._parser = parser
         return arguments
     arguments.operation = selected_operations[0]
-    arguments.target = getattr(arguments, f"{arguments.operation}_target")
+    arguments.target = (
+        "all" if arguments.operation == "miniusers"
+        else getattr(arguments, f"{arguments.operation}_target")
+    )
     if arguments.operation in {"upload", "download"} and not arguments.config_name:
         parser.error("--config-name is required for upload and download")
     return arguments
@@ -334,6 +339,14 @@ def main(argv=None):
         arguments._parser.print_help()
         return 0
 
+    if arguments.operation == "miniusers":
+        try:
+            miniusers_setup()
+        except Exception as error:
+            print(f"miniusers: {error}")
+            return 1
+        return 0
+
     configuration = load_configuration(arguments.config_dir, arguments.inventory_file)
     selected = select_switches(configuration, arguments.target)
     for switch in selected:
@@ -352,7 +365,7 @@ def main(argv=None):
             print(f"{switch['alias']}: {error}")
         finally:
             runner.close_session()
-    if arguments.operation == "sanitize":
+    if arguments.miniusers_target:
         try:
             miniusers_setup()
         except Exception as error:
@@ -362,7 +375,7 @@ def main(argv=None):
 
 
 def miniusers_setup():
-    helper_dir = Path(__file__).parent
+    helper_dir = Path(__file__).parent / "scripts"
     stop_script = helper_dir / "muser_stop.sh"
     start_script = helper_dir / "muser_start.sh"
     missing = [str(path) for path in (stop_script, start_script) if not path.exists()]

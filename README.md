@@ -20,7 +20,7 @@ config/
     OCNOS.json
 ```
 
-For sanitize operations, copy the mini-user helper scripts beside
+For mini-user setup, keep the helper scripts under `scripts/` beside
 `sanitize-3.py`:
 
 ```text
@@ -105,6 +105,7 @@ python sanitize-3.py --sanitize
 python sanitize-3.py --reboot
 python sanitize-3.py --upload --config-name backup
 python sanitize-3.py --download --config-name backup
+python sanitize-3.py --miniusers
 ```
 
 Run one switch by passing its inventory alias:
@@ -123,6 +124,7 @@ Short operation flags are also available:
 -r/--reboot
 -u/--upload
 -d/--download
+-m/--miniusers
 -c/--config-name PREFIX
 -l/--list FILE
 --config-dir PATH

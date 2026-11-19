@@ -18,6 +18,7 @@
 - Model files live under `config/sw-models/`.
 - Credentials and FTP settings are JSON-configured plaintext values and must be documented as sensitive.
 - Operations are `sanitize`, `reboot`, `upload`, and `download`.
+- `-m/--miniusers` runs mini-user setup as an independent action.
 - An omitted operation target means `all`.
 - `--sanitize` performs factory reset; `--reboot` performs only reboot behavior.
 - All-switch execution is serial, continues after individual failures, and exits nonzero if any switch fails.

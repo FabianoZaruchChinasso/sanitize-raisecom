@@ -14,6 +14,7 @@ reference versions.
   Python code.
 - Define `sanitize`, `reboot`, `upload`, and `download` behavior in model JSON
   files using ordered prompt/command steps.
+- Run mini-user setup only when explicitly requested with `-m/--miniusers`.
 - Support all-switch and single-switch operation selection.
 - Run manually on another host from a copied directory.
 - Document installation, configuration, FTP server setup, and commands.

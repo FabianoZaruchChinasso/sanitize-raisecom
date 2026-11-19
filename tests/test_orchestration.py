@@ -95,13 +95,30 @@ class OrchestrationTests(unittest.TestCase):
         self.assertIn("--sanitize", output.getvalue())
         self.assertEqual(FakeSwitch.events, [])
 
-    def test_sanitize_runs_miniusers_setup_after_switches(self):
+    def test_sanitize_does_not_run_miniusers_setup(self):
         with patch.object(sanitize_3, "load_configuration", return_value=self.configuration), patch.object(
             sanitize_3, "Switch", FakeSwitch
         ), patch.object(sanitize_3, "miniusers_setup") as setup:
             result = sanitize_3.main(["--sanitize", "RINGS2"])
 
         self.assertEqual(result, 0)
+        setup.assert_not_called()
+
+    def test_miniusers_flag_runs_setup_without_switches(self):
+        with patch.object(sanitize_3, "miniusers_setup") as setup:
+            result = sanitize_3.main(["-m"])
+
+        self.assertEqual(result, 0)
+        setup.assert_called_once()
+
+    def test_combined_sanitize_and_miniusers_runs_setup_after_switches(self):
+        with patch.object(sanitize_3, "load_configuration", return_value=self.configuration), patch.object(
+            sanitize_3, "Switch", FakeSwitch
+        ), patch.object(sanitize_3, "miniusers_setup") as setup:
+            result = sanitize_3.main(["--sanitize", "RINGS2", "--miniusers"])
+
+        self.assertEqual(result, 0)
+        self.assertEqual(FakeSwitch.events[0], ("execute", "RINGS2", "sanitize"))
         setup.assert_called_once()
 
 

@@ -27,6 +27,17 @@ class CliTests(unittest.TestCase):
         self.assertEqual(arguments.operation, "sanitize")
         self.assertEqual(arguments.target, "all")
 
+    def test_miniusers_flag_selects_miniusers_action(self):
+        arguments = sanitize_3.parse_args(["-m"])
+
+        self.assertEqual(arguments.operation, "miniusers")
+
+    def test_miniusers_flag_can_be_combined_with_sanitize(self):
+        arguments = sanitize_3.parse_args(["-s", "RINGS2", "-m"])
+
+        self.assertEqual(arguments.operation, "sanitize")
+        self.assertTrue(arguments.miniusers_target)
+
     def test_explicit_all_selects_full_inventory(self):
         configuration = self.configuration()
 
