@@ -48,7 +48,7 @@ The default configuration directory is `./config`. Override it with
 
 ```json
 {
-  "RINGS2": {
+  "RING-S2": {
     "name": "RING-S2",
     "address": "10.30.0.201",
     "model": "RAX711",
@@ -106,15 +106,18 @@ python sanitize-3.py --reboot
 python sanitize-3.py --upload --config-name backup
 python sanitize-3.py --download --config-name backup
 python sanitize-3.py --miniusers
+python sanitize-3.py --print
+python sanitize-3.py --print RING-S2
+python sanitize-3.py --print dump
 ```
 
 Run one switch by passing its inventory alias:
 
 ```bash
-python sanitize-3.py --sanitize RINGS2
+python sanitize-3.py --sanitize RING-S2
 python sanitize-3.py --reboot RAX-MPLS1
-python sanitize-3.py --upload RINGS2 --config-name nightly
-python sanitize-3.py --download RINGS2 --config-name nightly
+python sanitize-3.py --upload RING-S2 --config-name nightly
+python sanitize-3.py --download RING-S2 --config-name nightly
 ```
 
 Short operation flags are also available:
@@ -125,6 +128,7 @@ Short operation flags are also available:
 -u/--upload
 -d/--download
 -m/--miniusers
+-p/--print [all|SWITCH|dump]
 -c/--config-name PREFIX
 -l/--list FILE
 --config-dir PATH
@@ -134,6 +138,10 @@ Short operation flags are also available:
 directory and defaults to `switches.json`. Upload and download require
 `--config-name`; for example, `--config-name nightly` and device `RING-S2`
 produce `nightly-RING-S2.cfg`.
+
+`--print` without a value, or with `all`, lists switch aliases. A switch alias
+prints that switch's JSON values, while `dump` prints the complete inventory
+JSON.
 
 `--sanitize` performs the model's factory-reset procedure. `--reboot` runs
 only the model's reboot procedure.

@@ -38,6 +38,19 @@ class CliTests(unittest.TestCase):
         self.assertEqual(arguments.operation, "sanitize")
         self.assertTrue(arguments.miniusers_target)
 
+    def test_print_defaults_to_all(self):
+        arguments = sanitize_3.parse_args(["-p"])
+
+        self.assertEqual(arguments.operation, "print")
+        self.assertEqual(arguments.target, "all")
+
+    def test_print_accepts_switch_selector_and_dump(self):
+        selector = sanitize_3.parse_args(["--print", "RINGS2"])
+        dump = sanitize_3.parse_args(["--print", "dump"])
+
+        self.assertEqual(selector.target, "RINGS2")
+        self.assertEqual(dump.target, "dump")
+
     def test_explicit_all_selects_full_inventory(self):
         configuration = self.configuration()
 

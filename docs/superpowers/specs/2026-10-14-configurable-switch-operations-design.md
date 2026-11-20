@@ -15,6 +15,8 @@ reference versions.
 - Define `sanitize`, `reboot`, `upload`, and `download` behavior in model JSON
   files using ordered prompt/command steps.
 - Run mini-user setup only when explicitly requested with `-m/--miniusers`.
+- Print configured switch aliases or JSON values with `-p/--print` without
+  opening Telnet sessions.
 - Support all-switch and single-switch operation selection.
 - Run manually on another host from a copied directory.
 - Document installation, configuration, FTP server setup, and commands.
@@ -110,7 +112,7 @@ only the configured normal reboot sequence.
   and unexpected-prompt failures clearly.
 - `all` processes switches serially, continues after an individual failure,
   reports all failures, and exits nonzero if any switch failed.
-- The inventory key is the user-facing switch selector, such as `RINGS2`;
+- The inventory key is the user-facing switch selector, such as `RING-S2`;
   the configured device name is used in commands and generated filenames.
 - Target normalization maps an omitted target and the explicit target `all` to
   the full configured switch list. Inventory aliases are validated so the

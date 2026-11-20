@@ -197,6 +197,7 @@ def parse_args(argv=None):
     operations.add_argument("-r", "--reboot", dest="reboot_target", nargs="?", const="all", metavar="SWITCH")
     operations.add_argument("-u", "--upload", dest="upload_target", nargs="?", const="all", metavar="SWITCH")
     operations.add_argument("-d", "--download", dest="download_target", nargs="?", const="all", metavar="SWITCH")
+    operations.add_argument("-p", "--print", dest="print_target", nargs="?", const="all", metavar="VALUE")
     parser.add_argument("-m", "--miniusers", dest="miniusers_target", action="store_true")
     parser.add_argument("-c", "--config-name", dest="config_name")
     parser.add_argument("-l", "--list", dest="inventory_file", default=DEFAULT_INVENTORY_FILE)
@@ -210,6 +211,7 @@ def parse_args(argv=None):
             ("reboot", arguments.reboot_target),
             ("upload", arguments.upload_target),
             ("download", arguments.download_target),
+            ("print", arguments.print_target),
             ("miniusers", "all" if arguments.miniusers_target else None),
         )
         if option is not None
@@ -220,9 +222,8 @@ def parse_args(argv=None):
         arguments._parser = parser
         return arguments
     arguments.operation = selected_operations[0]
-    arguments.target = (
-        "all" if arguments.operation == "miniusers"
-        else getattr(arguments, f"{arguments.operation}_target")
+    arguments.target = "all" if arguments.operation == "miniusers" else getattr(
+        arguments, f"{arguments.operation}_target"
     )
     if arguments.operation in {"upload", "download"} and not arguments.config_name:
         parser.error("--config-name is required for upload and download")
@@ -348,6 +349,22 @@ def main(argv=None):
         return 0
 
     configuration = load_configuration(arguments.config_dir, arguments.inventory_file)
+
+    if arguments.operation == "print":
+        target = arguments.target.casefold()
+        if target == "dump":
+            print(json.dumps(configuration.switches, indent=2))
+            return 0
+        if target == "all":
+            for alias in configuration.switches:
+                print(alias)
+            return 0
+        for alias, switch in configuration.switches.items():
+            if alias.casefold() == target:
+                print(json.dumps(switch, indent=2))
+                return 0
+        raise ConfigurationError(f"Unknown switch alias: {arguments.target}")
+
     selected = select_switches(configuration, arguments.target)
     for switch in selected:
         validate_operation(configuration, switch["alias"], arguments.operation)

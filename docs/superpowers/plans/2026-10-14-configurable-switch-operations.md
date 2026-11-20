@@ -19,6 +19,7 @@
 - Credentials and FTP settings are JSON-configured plaintext values and must be documented as sensitive.
 - Operations are `sanitize`, `reboot`, `upload`, and `download`.
 - `-m/--miniusers` runs mini-user setup as an independent action.
+- `-p/--print [all|SWITCH|dump]` prints aliases or switch inventory JSON.
 - An omitted operation target means `all`.
 - `--sanitize` performs factory reset; `--reboot` performs only reboot behavior.
 - All-switch execution is serial, continues after individual failures, and exits nonzero if any switch fails.
@@ -54,7 +55,7 @@
 - [ ] **Step 1: Write failing tests for configuration loading and rendering**
 
   Test `load_configuration()` with the fixture JSON and assert that the
-  `RINGS2` selector resolves to model `RAX711` and FTP values load. Test that
+  `RING-S2` selector resolves to model `RAX711` and FTP values load. Test that
   `render_step()` accepts exactly `{device_name}`, `{switch_alias}`,
   `{username}`, `{password}`, `{ftp_host}`, `{ftp_user}`, `{ftp_pass}`,
   `{config_name}`, and `{filename}`, rendering `{filename}` as

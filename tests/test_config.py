@@ -20,7 +20,7 @@ class ConfigurationTests(unittest.TestCase):
         (root / "switches.json").write_text(
             json.dumps(
                 {
-                    "RINGS2": {
+                    "RING-S2": {
                         "name": "RING-S2",
                         "address": "10.30.0.201",
                         "model": "RAX711",
@@ -52,13 +52,13 @@ class ConfigurationTests(unittest.TestCase):
 
             configuration = sanitize_3.load_configuration(root, "switches.json")
 
-            self.assertEqual(configuration.switches["RINGS2"]["model"], "RAX711")
+            self.assertEqual(configuration.switches["RING-S2"]["model"], "RAX711")
             self.assertEqual(configuration.ftp["host"], "10.147.20.159")
 
     def test_render_step_supports_standard_placeholders(self):
         context = {
             "device_name": "RING-S2",
-            "switch_alias": "RINGS2",
+            "switch_alias": "RING-S2",
             "username": "master",
             "password": "switch-pass",
             "ftp_host": "10.147.20.159",
@@ -78,7 +78,7 @@ class ConfigurationTests(unittest.TestCase):
 
         self.assertEqual(
             rendered["send"],
-            "RING-S2|RINGS2|master|switch-pass|10.147.20.159|ftp-user|"
+            "RING-S2|RING-S2|master|switch-pass|10.147.20.159|ftp-user|"
             "ftp-pass|backup|backup-RING-S2.cfg",
         )
 
@@ -93,7 +93,7 @@ class ConfigurationTests(unittest.TestCase):
             configuration = sanitize_3.load_configuration(root, "switches.json")
 
             with self.assertRaises(sanitize_3.ConfigurationError):
-                sanitize_3.validate_operation(configuration, "RINGS2", "upload")
+                sanitize_3.validate_operation(configuration, "RING-S2", "upload")
 
     def test_production_rax_sanitize_contains_factory_reset_sequence(self):
         configuration = sanitize_3.load_configuration(
@@ -106,6 +106,14 @@ class ConfigurationTests(unittest.TestCase):
             [step["send"] for step in steps],
             ["boot next-startup system1", "write", "reboot", "yes"],
         )
+
+    def test_core_production_selectors_match_device_names(self):
+        configuration = sanitize_3.load_configuration(
+            Path(__file__).parents[1] / "config", "switches.json"
+        )
+
+        for selector in ("RING-S1", "RING-S2", "RING-S3"):
+            self.assertEqual(configuration.switches[selector]["name"], selector)
 
     def test_production_rax_download_starts_with_confirmation_prompt(self):
         configuration = sanitize_3.load_configuration(

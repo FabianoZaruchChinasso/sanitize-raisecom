@@ -1,19 +1,19 @@
 {
-  "RINGS1": {
+  "RING-S1": {
     "name": "RING-S1",
     "address": "10.30.0.200",
     "model": "ISCOM",
     "username": "venko",
     "password": "V3nk0-raisecom"
   },
-  "RINGS2": {
+  "RING-S2": {
     "name": "RING-S2",
     "address": "10.30.0.201",
     "model": "RAX711",
     "username": "master",
     "password": "America.1"
   },
-  "RINGS3": {
+  "RING-S3": {
     "name": "RING-S3",
     "address": "10.30.0.202",
     "model": "ISCOM",

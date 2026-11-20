@@ -34,8 +34,8 @@ class OrchestrationTests(unittest.TestCase):
         FakeSwitch.fail_alias = None
         self.configuration = sanitize_3.Configuration(
             switches={
-                "RINGS1": {"name": "RING-S1", "address": "a", "model": "M"},
-                "RINGS2": {"name": "RING-S2", "address": "b", "model": "M"},
+                "RING-S1": {"name": "RING-S1", "address": "a", "model": "M"},
+                "RING-S2": {"name": "RING-S2", "address": "b", "model": "M"},
             },
             ftp={"host": "h", "user": "u", "password": "p"},
             models={"M": {"login": [], "operations": {"sanitize": [{"send": "x"}], "reboot": [{"send": "x"}]}}},
@@ -48,10 +48,10 @@ class OrchestrationTests(unittest.TestCase):
             return sanitize_3.main(argv)
 
     def test_single_selector_runs_only_selected_switch(self):
-        result = self.run_main(["--sanitize", "RINGS2"])
+        result = self.run_main(["--sanitize", "RING-S2"])
 
         self.assertEqual(result, 0)
-        self.assertEqual(FakeSwitch.events, [("execute", "RINGS2", "sanitize"), ("close", "RINGS2")])
+        self.assertEqual(FakeSwitch.events, [("execute", "RING-S2", "sanitize"), ("close", "RING-S2")])
 
     def test_omitted_and_explicit_all_run_inventory_in_order(self):
         self.assertEqual(self.run_main(["--reboot"]), 0)
@@ -63,15 +63,15 @@ class OrchestrationTests(unittest.TestCase):
         self.assertEqual(
             omitted_events,
             [
-                ("execute", "RINGS1", "reboot"),
-                ("close", "RINGS1"),
-                ("execute", "RINGS2", "reboot"),
-                ("close", "RINGS2"),
+                ("execute", "RING-S1", "reboot"),
+                ("close", "RING-S1"),
+                ("execute", "RING-S2", "reboot"),
+                ("close", "RING-S2"),
             ],
         )
 
     def test_failure_closes_before_next_switch_and_returns_failure(self):
-        FakeSwitch.fail_alias = "RINGS1"
+        FakeSwitch.fail_alias = "RING-S1"
 
         result = self.run_main(["--sanitize"])
 
@@ -79,10 +79,10 @@ class OrchestrationTests(unittest.TestCase):
         self.assertEqual(
             FakeSwitch.events,
             [
-                ("execute", "RINGS1", "sanitize"),
-                ("close", "RINGS1"),
-                ("execute", "RINGS2", "sanitize"),
-                ("close", "RINGS2"),
+                ("execute", "RING-S1", "sanitize"),
+                ("close", "RING-S1"),
+                ("execute", "RING-S2", "sanitize"),
+                ("close", "RING-S2"),
             ],
         )
 
@@ -99,7 +99,7 @@ class OrchestrationTests(unittest.TestCase):
         with patch.object(sanitize_3, "load_configuration", return_value=self.configuration), patch.object(
             sanitize_3, "Switch", FakeSwitch
         ), patch.object(sanitize_3, "miniusers_setup") as setup:
-            result = sanitize_3.main(["--sanitize", "RINGS2"])
+            result = sanitize_3.main(["--sanitize", "RING-S2"])
 
         self.assertEqual(result, 0)
         setup.assert_not_called()
@@ -111,14 +111,40 @@ class OrchestrationTests(unittest.TestCase):
         self.assertEqual(result, 0)
         setup.assert_called_once()
 
+    def test_print_all_lists_only_switch_aliases(self):
+        output = io.StringIO()
+        with patch.object(sanitize_3, "load_configuration", return_value=self.configuration), contextlib.redirect_stdout(output):
+            result = sanitize_3.main(["--print"])
+
+        self.assertEqual(result, 0)
+        self.assertEqual(output.getvalue().splitlines(), ["RING-S1", "RING-S2"])
+
+    def test_print_selector_outputs_switch_json(self):
+        output = io.StringIO()
+        with patch.object(sanitize_3, "load_configuration", return_value=self.configuration), contextlib.redirect_stdout(output):
+            result = sanitize_3.main(["--print", "RING-S2"])
+
+        self.assertEqual(result, 0)
+        self.assertIn('"name": "RING-S2"', output.getvalue())
+        self.assertNotIn('"RING-S1"', output.getvalue())
+
+    def test_print_dump_outputs_complete_inventory_json(self):
+        output = io.StringIO()
+        with patch.object(sanitize_3, "load_configuration", return_value=self.configuration), contextlib.redirect_stdout(output):
+            result = sanitize_3.main(["--print", "dump"])
+
+        self.assertEqual(result, 0)
+        self.assertIn('"RING-S1"', output.getvalue())
+        self.assertIn('"RING-S2"', output.getvalue())
+
     def test_combined_sanitize_and_miniusers_runs_setup_after_switches(self):
         with patch.object(sanitize_3, "load_configuration", return_value=self.configuration), patch.object(
             sanitize_3, "Switch", FakeSwitch
         ), patch.object(sanitize_3, "miniusers_setup") as setup:
-            result = sanitize_3.main(["--sanitize", "RINGS2", "--miniusers"])
+            result = sanitize_3.main(["--sanitize", "RING-S2", "--miniusers"])
 
         self.assertEqual(result, 0)
-        self.assertEqual(FakeSwitch.events[0], ("execute", "RINGS2", "sanitize"))
+        self.assertEqual(FakeSwitch.events[0], ("execute", "RING-S2", "sanitize"))
         setup.assert_called_once()
 
 
