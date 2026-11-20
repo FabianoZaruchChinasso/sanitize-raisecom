@@ -46,6 +46,17 @@ sudo ./scripts/install.sh
 sanitize-3 --help
 ```
 
+The installer also supports lifecycle actions:
+
+```bash
+sudo ./scripts/install.sh update
+sudo ./scripts/install.sh uninstall
+```
+
+`update` replaces the installed script, configuration, and helper scripts from
+the current checkout. `uninstall` removes `/usr/bin/sanitize-3` and
+`/etc/sanitize` after confirmation.
+
 The installer places the script at `/etc/sanitize/sanitize-3.py`, creates the
 `/usr/bin/sanitize-3` command, copies configuration to `/etc/sanitize/config`,
 and copies helper scripts to `/etc/sanitize/scripts`. When running outside a
