@@ -39,6 +39,19 @@ python -m pip install -r requirements.txt
 
 Run the commands manually from the directory containing `sanitize-3.py`.
 
+To install the command system-wide:
+
+```bash
+sudo ./scripts/install.sh
+sanitize-3 --help
+```
+
+The installer places the script at `/etc/sanitize/sanitize-3.py`, creates the
+`/usr/bin/sanitize-3` command, copies configuration to `/etc/sanitize/config`,
+and copies helper scripts to `/etc/sanitize/scripts`. When running outside a
+checkout without a local `./config` directory, `sanitize-3` automatically uses
+`/etc/sanitize/config`.
+
 ## Configuration
 
 The default configuration directory is `./config`. Override it with

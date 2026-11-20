@@ -10,6 +10,7 @@ from string import Formatter
 
 
 DEFAULT_CONFIG_DIR = Path("./config")
+SYSTEM_CONFIG_DIR = Path("/etc/sanitize/config")
 DEFAULT_INVENTORY_FILE = "switches.json"
 MODEL_DIRECTORY = "sw-models"
 SUPPORTED_OPERATIONS = {"sanitize", "reboot", "upload", "download"}
@@ -39,6 +40,17 @@ class Configuration:
     switches: dict
     ftp: dict
     models: dict
+
+
+def resolve_config_dir(config_dir: Path, cwd: Path | None = None):
+    config_dir = Path(config_dir)
+    base_dir = Path.cwd() if cwd is None else Path(cwd)
+    local_dir = config_dir if config_dir.is_absolute() else base_dir / config_dir
+    if local_dir.exists() or config_dir != DEFAULT_CONFIG_DIR:
+        return local_dir
+    if SYSTEM_CONFIG_DIR.exists():
+        return SYSTEM_CONFIG_DIR
+    return local_dir
 
 
 def _read_json(path: Path):
@@ -348,7 +360,9 @@ def main(argv=None):
             return 1
         return 0
 
-    configuration = load_configuration(arguments.config_dir, arguments.inventory_file)
+    configuration = load_configuration(
+        resolve_config_dir(arguments.config_dir), arguments.inventory_file
+    )
 
     if arguments.operation == "print":
         target = arguments.target.casefold()
@@ -392,7 +406,7 @@ def main(argv=None):
 
 
 def miniusers_setup():
-    helper_dir = Path(__file__).parent / "scripts"
+    helper_dir = Path(__file__).resolve().parent / "scripts"
     stop_script = helper_dir / "muser_stop.sh"
     start_script = helper_dir / "muser_start.sh"
     missing = [str(path) for path in (stop_script, start_script) if not path.exists()]

@@ -115,6 +115,20 @@ class ConfigurationTests(unittest.TestCase):
         for selector in ("RING-S1", "RING-S2", "RING-S3"):
             self.assertEqual(configuration.switches[selector]["name"], selector)
 
+    def test_default_config_falls_back_to_system_config_directory(self):
+        with tempfile.TemporaryDirectory() as directory:
+            system_config = Path(directory) / "config"
+            system_config.mkdir()
+
+            original_system_config = sanitize_3.SYSTEM_CONFIG_DIR
+            sanitize_3.SYSTEM_CONFIG_DIR = system_config
+            try:
+                resolved = sanitize_3.resolve_config_dir(Path("./config"), Path(directory) / "missing")
+            finally:
+                sanitize_3.SYSTEM_CONFIG_DIR = original_system_config
+
+            self.assertEqual(resolved, system_config)
+
     def test_production_rax_download_starts_with_confirmation_prompt(self):
         configuration = sanitize_3.load_configuration(
             Path(__file__).parents[1] / "config", "switches-mpls.json"
