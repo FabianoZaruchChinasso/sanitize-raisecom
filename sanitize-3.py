@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 
 import argparse
+from ftplib import FTP, error_perm
 import json
 import subprocess
 import time
@@ -35,11 +36,41 @@ class OperationError(RuntimeError):
     """Raised when a switch operation cannot complete safely."""
 
 
+class FtpError(RuntimeError):
+    """Raised when the FTP folder cannot be prepared."""
+
+
 @dataclass
 class Configuration:
     switches: dict
     ftp: dict
     models: dict
+
+
+def ensure_ftp_folder(ftp_settings, folder, ftp_factory=FTP):
+    ftp = ftp_factory()
+    try:
+        ftp.connect(ftp_settings["host"], 21, timeout=30)
+        ftp.login(ftp_settings["user"], ftp_settings["password"])
+        try:
+            ftp.mkd(folder)
+        except error_perm as error:
+            try:
+                ftp.cwd(folder)
+            except Exception:
+                raise FtpError(f"Cannot create FTP folder {folder!r}: {error}") from error
+    except FtpError:
+        raise
+    except Exception as error:
+        raise FtpError(f"Cannot prepare FTP folder {folder!r}: {error}") from error
+    finally:
+        try:
+            ftp.quit()
+        except Exception:
+            try:
+                ftp.close()
+            except Exception:
+                pass
 
 
 def resolve_config_dir(config_dir: Path, cwd: Path | None = None):
@@ -152,7 +183,8 @@ def load_configuration(config_dir: Path, inventory_file: str = DEFAULT_INVENTORY
 def _placeholder_context(context):
     context = dict(context)
     if "config_name" in context and "device_name" in context:
-        context["filename"] = f"{context['config_name']}-{context['device_name']}.cfg"
+        basename = f"{context['config_name']}-{context['device_name']}.cfg"
+        context["filename"] = f"{context['config_name']}/{basename}"
 
     unknown = set(context) - SUPPORTED_PLACEHOLDERS
     if unknown:
@@ -380,6 +412,8 @@ def main(argv=None):
         raise ConfigurationError(f"Unknown switch alias: {arguments.target}")
 
     selected = select_switches(configuration, arguments.target)
+    if arguments.operation in {"upload", "download"}:
+        ensure_ftp_folder(configuration.ftp, arguments.config_name)
     for switch in selected:
         validate_operation(configuration, switch["alias"], arguments.operation)
 

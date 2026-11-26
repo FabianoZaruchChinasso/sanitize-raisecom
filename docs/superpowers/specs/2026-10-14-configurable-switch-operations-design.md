@@ -76,7 +76,8 @@ The supported placeholder schema is fixed and validated by `render_step()`:
 - `{username}` and `{password}` are the switch Telnet credentials.
 - `{ftp_host}`, `{ftp_user}`, and `{ftp_pass}` are FTP server settings.
 - `{config_name}` is the configured filename prefix.
-- `{filename}` is the complete `{config_name}-{device_name}.cfg` filename.
+- `{filename}` is the remote path
+  `{config_name}/{config_name}-{device_name}.cfg`.
 
 ## Command-Line Interface
 

@@ -106,7 +106,10 @@ command has no response prompt to wait for. Supported command placeholders are:
 - `{ftp_host}`, `{ftp_user}`, and `{ftp_pass}`
 - `{config_name}` and `{filename}`
 
-`{filename}` is generated as `{config_name}-{device_name}.cfg`.
+`{filename}` is generated as
+`{config_name}/{config_name}-{device_name}.cfg`. The FTP folder is created in
+the FTP user's home directory before upload or download; an already-existing
+folder is accepted.
 
 Any command step may also define a positive `timeout` in seconds when the
 switch operation is expected to take longer than the default prompt timeout.

@@ -59,7 +59,7 @@
   `render_step()` accepts exactly `{device_name}`, `{switch_alias}`,
   `{username}`, `{password}`, `{ftp_host}`, `{ftp_user}`, `{ftp_pass}`,
   `{config_name}`, and `{filename}`, rendering `{filename}` as
-  `{config_name}-{device_name}.cfg`. Unknown placeholders must fail. Test that
+  `{config_name}/{config_name}-{device_name}.cfg`. Unknown placeholders must fail. Test that
   a model with no selected operation raises a validation error before any
   connection object is created.
 
@@ -77,8 +77,8 @@
   `{device_name}`, `{switch_alias}`, `{username}`, `{password}`, `{ftp_host}`,
   `{ftp_user}`, `{ftp_pass}`, `{config_name}`, and `{filename}`. Raise an
   actionable error for any unknown placeholder. Keep selector keys distinct
-  from device `name`; generated filenames use
-  `{config_name}-{device_name}.cfg`.
+  from device `name`; generated remote paths use
+  `{config_name}/{config_name}-{device_name}.cfg`.
 
 - [ ] **Step 4: Add representative JSON configuration files**
 

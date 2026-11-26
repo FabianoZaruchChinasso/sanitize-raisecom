@@ -38,7 +38,17 @@ class OrchestrationTests(unittest.TestCase):
                 "RING-S2": {"name": "RING-S2", "address": "b", "model": "M"},
             },
             ftp={"host": "h", "user": "u", "password": "p"},
-            models={"M": {"login": [], "operations": {"sanitize": [{"send": "x"}], "reboot": [{"send": "x"}]}}},
+            models={
+                "M": {
+                    "login": [],
+                    "operations": {
+                        "sanitize": [{"send": "x"}],
+                        "reboot": [{"send": "x"}],
+                        "upload": [{"send": "x"}],
+                        "download": [{"send": "x"}],
+                    },
+                }
+            },
         )
 
     def run_main(self, argv):
@@ -146,6 +156,19 @@ class OrchestrationTests(unittest.TestCase):
         self.assertEqual(result, 0)
         self.assertEqual(FakeSwitch.events[0], ("execute", "RING-S2", "sanitize"))
         setup.assert_called_once()
+
+    def test_upload_creates_ftp_folder_before_switch_execution(self):
+        def create_folder(*args):
+            FakeSwitch.events.append(("ftp-folder",))
+
+        with patch.object(sanitize_3, "load_configuration", return_value=self.configuration), patch.object(
+            sanitize_3, "Switch", FakeSwitch
+        ), patch.object(sanitize_3, "ensure_ftp_folder", side_effect=create_folder):
+            result = sanitize_3.main(["--upload", "RING-S2", "--config-name", "backup"])
+
+        self.assertEqual(result, 0)
+        self.assertEqual(FakeSwitch.events[0], ("ftp-folder",))
+        self.assertEqual(FakeSwitch.events[1], ("execute", "RING-S2", "upload"))
 
 
 if __name__ == "__main__":

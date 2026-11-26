@@ -79,7 +79,7 @@ class ConfigurationTests(unittest.TestCase):
         self.assertEqual(
             rendered["send"],
             "RING-S2|RING-S2|master|switch-pass|10.147.20.159|ftp-user|"
-            "ftp-pass|backup|backup-RING-S2.cfg",
+            "ftp-pass|backup|backup/backup-RING-S2.cfg",
         )
 
     def test_render_step_rejects_unknown_placeholder(self):
